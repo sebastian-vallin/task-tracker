@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AddTask from "./components/AddTask";
 import Header from "./components/Header";
 import Tasks from "./components/Tasks";
 
@@ -46,9 +47,22 @@ function App() {
     setTasks(newTasks);
   }
 
+  function addTask(task) {
+    let id = 0;
+    if (tasks.length > 0) {
+      // [task1, task2, task3]
+      //  [0]     [1]    [2]
+      // .length => 3
+      id = tasks[tasks.length - 1].id + 1;
+    }
+    const newTask = { ...task, id };
+    setTasks([...tasks, newTask]);
+  }
+
   return (
     <div className="container">
       <Header />
+      <AddTask onSubmit={addTask} />
       <Tasks onToggle={toggleReminder} onDelete={deleteTask} tasks={tasks} />
     </div>
   );
