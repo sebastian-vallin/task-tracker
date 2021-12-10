@@ -1,32 +1,50 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AddTask from "./components/AddTask";
 import Header from "./components/Header";
 import Tasks from "./components/Tasks";
 
-const initialTasks = [
-  {
-    id: 1,
-    text: "Task 1",
-    day: "Dec 10th at 2:00pm",
-    reminder: true,
-  },
-  {
-    id: 2,
-    text: "Task 2",
-    day: "Dec 12th at 5:00pm",
-    reminder: false,
-  },
-  {
-    id: 3,
-    text: "Task 3",
-    day: "Dec 10th at 9:00am",
-    reminder: true,
-  },
-];
+// const initialTasks = [
+//   {
+//     id: 1,
+//     text: "Task 1",
+//     day: "Dec 10th at 2:00pm",
+//     reminder: true,
+//   },
+//   {
+//     id: 2,
+//     text: "Task 2",
+//     day: "Dec 12th at 5:00pm",
+//     reminder: false,
+//   },
+//   {
+//     id: 3,
+//     text: "Task 3",
+//     day: "Dec 10th at 9:00am",
+//     reminder: true,
+//   },
+// ];
 
 function App() {
-  const [tasks, setTasks] = useState(initialTasks);
+  const [tasks, setTasks] = useState([]);
   const [showAdd, setShowAdd] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const data = localStorage.getItem("tasks");
+    console.log(data);
+    if (data) {
+      // "[{"task1", ...}, {"task2", ...}]"
+      setTasks(JSON.parse(data));
+    } else {
+      setTasks([]);
+    }
+
+    setTimeout(() => setLoading(false), 1000);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
 
   function toggleReminder(id) {
     const newTasks = tasks.map((task) =>
@@ -58,6 +76,10 @@ function App() {
     }
     const newTask = { ...task, id };
     setTasks([...tasks, newTask]);
+  }
+
+  if (loading) {
+    return <p className="loading">Loading tasks...</p>;
   }
 
   return (
